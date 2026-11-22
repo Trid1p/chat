@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hey, want to chat? 👋</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#eef1ff;--card:#fff;--tx:#1d2540;--mu:#5d6a8c;--ac:#5b6cff;--ac2:#b05bff;--chip:#e7ebff;--bd:#c9d2f8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1126;--card:#181d3d;--tx:#e8ecff;--mu:#9aa6d1;--ac:#7b8cff;--ac2:#c58bff;--chip:#252c58;--bd:#3a4575}}
+:root[data-theme="dark"]{--bg:#0e1126;--card:#181d3d;--tx:#e8ecff;--mu:#9aa6d1;--ac:#7b8cff;--ac2:#c58bff;--chip:#252c58;--bd:#3a4575}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;display:flex;justify-content:center;padding:18px}
+.card{background:var(--card);border-radius:26px;padding:26px 20px;max-width:430px;width:100%;box-shadow:0 12px 34px rgba(91,108,255,.18);align-self:flex-start;margin-top:12px}
+.dots{display:flex;gap:5px;justify-content:center;margin-bottom:14px}
+.dots i{width:22px;height:5px;border-radius:9px;background:var(--chip)}.dots i.on{background:linear-gradient(90deg,var(--ac),var(--ac2))}
+.big{font-size:58px;text-align:center;animation:w 2.4s ease-in-out infinite;display:block}
+@keyframes w{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(12deg) scale(1.1)}}
+h1{text-align:center;font-size:24px;margin:8px 0}
+p.s{text-align:center;color:var(--mu);margin:0 0 16px;line-height:1.5}
+label{display:block;font-weight:600;margin:14px 0 8px;font-size:14px}
+.view{display:none;animation:in .4s ease}
+@keyframes in{from{opacity:0;transform:translateY(12px)}}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt{background:var(--chip);border:2px solid transparent;border-radius:18px;padding:14px 8px;font-size:14px;color:var(--tx);cursor:pointer;text-align:center}
+.opt b{display:block;font-size:30px;margin-bottom:2px}
+.opt.on{border-color:var(--ac);transform:scale(1.04)}
+.em{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.em button{font-size:30px;background:var(--chip);border:2px solid transparent;border-radius:16px;padding:8px 10px;cursor:pointer}
+.em button.on{border-color:var(--ac);transform:scale(1.12)}
+input[type=text],textarea{width:100%;border-radius:14px;border:1.5px solid var(--bd);background:var(--card);color:var(--tx);padding:12px;font:inherit;font-size:16px;resize:none}
+input[type=range]{width:100%;accent-color:var(--ac)}
+.rv{text-align:center;font-weight:700;font-size:18px}
+.cards{display:flex;gap:8px;justify-content:center;margin:10px 0}
+.pc{width:34%;aspect-ratio:3/4;perspective:600px;cursor:pointer;border:0;background:none;padding:0}
+.pc div{width:100%;height:100%;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:28px;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;transition:transform .5s}
+.pc.f div{transform:rotateY(360deg)}
+.pc.dim{opacity:.35}
+.q{background:var(--chip);border-radius:14px;padding:12px;text-align:center;font-weight:600;display:none;margin-bottom:10px}
+.spin{font-size:26px;font-weight:800;text-align:center;background:var(--chip);border-radius:18px;padding:30px 10px;margin:12px 0;min-height:96px}
+button.go{background:linear-gradient(90deg,var(--ac),var(--ac2));color:#fff;border:0;padding:14px 26px;border-radius:14px;font-size:17px;font-weight:700;cursor:pointer;width:100%;margin-top:10px}
+button.go:disabled{opacity:.4}
+button.alt{background:var(--chip);color:var(--tx);border:0;padding:13px 20px;border-radius:14px;font-size:15px;cursor:pointer;width:100%;margin-top:10px}
+.prof{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;border-radius:20px;padding:18px;line-height:1.8;margin:14px 0;font-size:16px}
+.fort{font-style:italic;text-align:center;color:var(--mu);margin:8px 0}
+.bar{height:10px;background:rgba(255,255,255,.3);border-radius:9px;margin-top:6px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:#fff;border-radius:9px;transition:width 1.4s}
+.heart{position:fixed;bottom:-30px;animation:f 3s linear forwards;pointer-events:none}
+@keyframes f{to{transform:translateY(-110vh);opacity:0}}
+</style></head><body>
+<div class="card">
+ <div class="dots" id="dots"></div>
+
+ <div class="view" id="v0">
+  <span class="big">👋</span>
+  <h1>Hey, want to chat?</h1>
+  <p class="s">I made a little game for you. 5 quick steps, about two minutes, zero pressure.</p>
+  <button class="go" id="start">Let’s play 🎮</button>
+  <button class="alt" id="later">Maybe later</button>
+ </div>
+
+ <div class="view" id="v1">
+  <h1>Step 1 · You</h1>
+  <label>Which one is most you?</label>
+  <div class="grid" id="vibes"></div>
+  <button class="go" id="n1" disabled>Next →</button>
+  <button class="alt back" data-b="0">← Previous</button>
+ </div>
+
+ <div class="view" id="v2">
+  <h1>Step 2 · Your day</h1>
+  <p class="s">Pick up to 3 emojis that describe today</p>
+  <div class="em" id="ems"></div>
+  <label>How’s your day so far?</label>
+  <input type="range" id="rg" min="0" max="10" value="7">
+  <div class="rv" id="rv">7/10 🙂</div>
+  <button class="go" id="n2" disabled>Next →</button>
+  <button class="alt back" data-b="1">← Previous</button>
+ </div>
+
+ <div class="view" id="v3">
+  <h1>Step 3 · Mystery card</h1>
+  <p class="s">Open both cards and answer the ones you like.</p>
+  <div class="cards" id="cards"></div>
+  <div id="qa"></div>
+  <button class="go" id="n3" disabled>Next →</button>
+  <button class="alt back" data-b="2">← Previous</button>
+ </div>
+
+ <div class="view" id="v4">
+  <h1>Step 4 · Spin for a topic</h1>
+  <p class="s">Let luck decide what we talk about.</p>
+  <div class="spin" id="sp">🎰</div>
+  <button class="go" id="spinb">Spin!</button>
+  <button class="go" id="n4" disabled>Finish ✨</button>
+  <button class="alt back" data-b="3">← Previous</button>
+ </div>
+
+ <div class="view" id="v5">
+  <span class="big">🎉</span>
+  <h1>Your chat card</h1>
+  <div class="prof" id="prof"></div>
+  <div class="fort" id="fort"></div>
+  <button class="go" id="share">Send it to me 💬</button>
+  <button class="alt" id="copy">Copy message 📋</button>
+  <p class="s" id="note" style="margin-top:10px"></p>
+ </div>
+
+ <div class="view" id="vl">
+  <span class="big">🙂</span>
+  <h1>No worries!</h1>
+  <p class="s">Thanks for stopping by. Take care!</p>
+ </div>
+</div>
+<script>
+var $=function(i){return document.getElementById(i)};
+var vibes=[["🌙","Night owl"],["☀️","Early bird"],["🌊","Chill soul"],["🔥","Adventurer"],["🎨","Creative"],["🤓","Curious mind"]];
+var emojis=["😄","😴","🥳","😎","🤔","😅","🥰","🤯"];
+var qs=["What’s a song you never skip?","What’s your comfort food?","Dream place to travel?","Last thing that made you laugh?","Your hidden talent?","A show you could rewatch forever?","Best trip you’ve ever taken?","What did you want to be as a kid?","Your go-to late-night snack?","A small thing that makes your day better?","Which app do you use the most?","What’s your most unpopular opinion?"];
+var topics=["🎧 Music","✈️ Travel","🍜 Food","🎬 Movies","😂 Memes","🌌 Random thoughts","📚 Books","🐶 Pets","🎮 Games","🍳 Cooking","💭 Dreams","🏏 Sports"];
+var forts=["Something good is coming your way ✨","You’re going to laugh a lot this week 😄","A great conversation is about to start 💬","Today’s luck: 100% ☘️","You’ll discover a new favorite song soon 🎶","Small steps, big smiles 🌟"];
+var moods=["😞","😕","😐","🙂","🙂","🙂","😊","😊","😄","😁","🤩"];
+var S={name:"",vibe:null,em:[],r:7,qa:[],t:null,e:0,f:""};
+var dots=$("dots");for(var i=0;i<6;i++)dots.appendChild(document.createElement("i"));
+function esc(s){return s.replace(/[&<>]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c]})}
+function show(n){["v0","v1","v2","v3","v4","v5","vl"].forEach(function(x,i){$(x).style.display=(n===i||(n==="l"&&x==="vl"))?"block":"none"});
+ [].forEach.call(dots.children,function(d,i){d.className=(n!=="l"&&i<=n)?"on":""});dots.style.display=n==="l"?"none":"flex"}
+function hearts(){for(var i=0;i<18;i++)(function(i){setTimeout(function(){var h=document.createElement("div");h.className="heart";h.textContent=["✨","💫","🎉","💙"][i%4];h.style.left=Math.random()*95+"vw";h.style.fontSize=(18+Math.random()*20)+"px";document.body.appendChild(h);setTimeout(function(){h.remove()},3200)},i*120)})(i)}
+vibes.forEach(function(v){var b=document.createElement("button");b.className="opt";b.innerHTML="<b>"+v[0]+"</b>"+v[1];b.onclick=function(){S.vibe=v[0]+" "+v[1];[].forEach.call($("vibes").children,function(c){c.classList.remove("on")});b.classList.add("on");$("n1").disabled=false};$("vibes").appendChild(b)});
+emojis.forEach(function(e){var b=document.createElement("button");b.textContent=e;b.onclick=function(){var i=S.em.indexOf(e);if(i>-1){S.em.splice(i,1);b.classList.remove("on")}else if(S.em.length<3){S.em.push(e);b.classList.add("on")}$("n2").disabled=!S.em.length};$("ems").appendChild(b)});
+$("rg").oninput=function(){S.r=+this.value;$("rv").textContent=S.r+"/10 "+moods[S.r]};
+var pool=qs.slice().sort(function(){return Math.random()-.5}).slice(0,2);
+pool.forEach(function(q){var b=document.createElement("button");b.className="pc";b.innerHTML="<div>🂠</div>";b.onclick=function(){if(b.classList.contains("f"))return;b.classList.add("f");b.firstChild.textContent="✨";var d=document.createElement("div");d.className="q";d.style.display="block";var p=document.createElement("div");p.textContent=q;d.appendChild(p);var t=document.createElement("textarea");t.rows=2;t.placeholder="Your answer (optional)";t.style.marginTop="8px";d.appendChild(t);$("qa").appendChild(d);S.qa.push({q:q,t:t});$("n3").disabled=false};$("cards").appendChild(b)});
+$("start").onclick=function(){show(1)};$("later").onclick=function(){show("l")};
+$("n1").onclick=function(){show(2)};
+$("n2").onclick=function(){show(3)};
+$("n3").onclick=function(){show(4)};
+var spinning=false;
+$("spinb").onclick=function(){if(spinning)return;spinning=true;var n=0,total=20+Math.floor(Math.random()*10),d=60;
+ (function tick(){var t=topics[n%topics.length];$("sp").textContent=t;n++;if(n<total){d+=8;setTimeout(tick,d)}else{S.t=t;spinning=false;$("n4").disabled=false;$("spinb").textContent="Spin again"}})()};
+$("n4").onclick=function(){
+ S.e=60+Math.floor(Math.random()*40);S.f=forts[Math.floor(Math.random()*forts.length)];
+ $("prof").innerHTML="<b>"+(S.name?esc(S.name)+"’s":"Your")+" card</b><br>Vibe: "+S.vibe+"<br>Today: "+S.em.join(" ")+" · "+S.r+"/10<br>"+qaHtml()+"<br>Let’s talk: "+S.t+"<br>Chat energy: "+S.e+"%<div class='bar'><i id='br'></i></div>";
+ $("fort").textContent="🔮 "+S.f;show(5);hearts();setTimeout(function(){$("br").style.width=S.e+"%"},100)};
+function qaList(){return S.qa.map(function(x){return {q:x.q,a:x.t.value.trim()}})}
+function qaHtml(){return qaList().map(function(x){return "<b>"+esc(x.q)+"</b><br>"+(x.a?"“"+esc(x.a)+"”":"<i>(skipped)</i>")}).join("<br>")}
+function msg(){return "Hey! "+(S.name?"It’s "+S.name+". ":"")+"I played your game 🎮\nVibe: "+S.vibe+"\nToday: "+S.em.join(" ")+" ("+S.r+"/10)\n"+qaList().map(function(x){return x.q+" → "+(x.a||"(skipped)")}).join("\n")+"\nLet’s talk about: "+S.t+"\nChat energy: "+S.e+"%"}
+$("share").onclick=function(){var m=msg();if(navigator.share){navigator.share({text:m}).catch(function(){})}else{try{navigator.clipboard.writeText(m);$("note").textContent="Copied! Paste it in your chat"}catch(e){}}};
+$("copy").onclick=function(){var m=msg(),ok=function(){$("note").textContent="Copied! Now paste it in Snapchat 👻"};var fb=function(){var t=document.createElement("textarea");t.value=m;document.body.appendChild(t);t.select();try{document.execCommand("copy");ok()}catch(e){$("note").textContent="Couldn’t copy. Please select the card text and copy it."}t.remove()};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(m).then(ok,fb)}else{fb()}};
+[].forEach.call(document.querySelectorAll(".back"),function(b){b.onclick=function(){show(+b.dataset.b)}});
+show(0);
+</script></body></html>
