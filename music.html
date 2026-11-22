@@ -47,7 +47,7 @@ label{display:block;font-weight:700;margin:14px 0 7px;font-size:14px}
 .bar{margin:9px 0}.bar .t{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
 .bar .tr{height:9px;background:rgba(255,255,255,.14);border-radius:9px;overflow:hidden}
 .bar .tr i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ac),var(--ac2));border-radius:9px;transition:width 1.3s cubic-bezier(.2,.9,.3,1)}
-#cardc{width:100%;max-width:310px;display:block;margin:14px auto;border-radius:18px;box-shadow:0 12px 36px rgba(0,0,0,.5)}
+#cardc{width:100%;display:block;margin:14px auto;border-radius:18px;box-shadow:0 12px 36px rgba(0,0,0,.5)}
 .note{text-align:center;color:var(--mu);font-size:14px;margin-top:10px;min-height:20px}
 .mute{position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);right:10px;z-index:30;background:rgba(255,255,255,.14);border:0;color:#fff;border-radius:50%;width:40px;height:40px;font-size:19px;cursor:pointer}
 </style></head><body>
@@ -133,6 +133,7 @@ var A={
 "The Crowd Favorite":{d:"You’re the person everyone wants to share music with. You know what’s trending, what’s fun and what works for the room, and your playlists bring people together.",g:["Warm, social and easy to be around","Knows how to read a mood"],r:["Has fifty group playlists at once","Gets visibly sad when nobody sings along"],q:["What’s the song you and your friends always sing together?","What was the last song that spread through your whole friend group?","What’s your favorite car-ride song with people?"]},
 "The Playlist Sharer":{d:"You use music to connect. Sending someone a song is how you say 'I thought of you', and the right track at the right time is your love language.",g:["Thoughtful and caring in small ways","Remembers what songs matter to which person"],r:["Sends a song instead of explaining feelings","Gets a bit hurt if you don’t listen right away"],q:["What’s the last song you sent to someone and why?","Which song reminds you of a good friend?","What song would you put on a playlist for a long trip?"]}};
 var TITLES={0:["3AM Thoughts & Slow Skies","Headphones On, World Off"],1:["Windows Down, Volume Up","Main Character Commute"],2:["No Skips, Only Gains","Louder Than My Excuses"],3:["Focus Mode: On","Quiet Brain, Loud Playlist"],4:["Songs For Rainy Brains","Heart On Shuffle"],5:["Good Mood Only","Sunshine On Repeat"]};
+var ENDPOINT=""; /* paste your Formspree link here, e.g. https://formspree.io/f/abcdwxyz */
 var S={g:[],m:[],card:null};
 
 /* nav */
@@ -187,15 +188,11 @@ function render(){var r=analyse(),a=A[r.name];S.card=r;
  var bars=r.t.map(function(x,i){return '<div class="bar"><div class="t"><span>'+TN[i]+'</span><span>'+x+'%</span></div><div class="tr"><i data-w="'+x+'"></i></div></div>'}).join("");
  var songs=(s1||s2)?'<div class="sec"><h3>🎵 Your songs</h3>'+(s1?'<p><b>On repeat:</b> '+esc(s1)+'</p>':'')+(s2?'<p style="margin-top:6px"><b>Song for me:</b> '+esc(s2)+'</p>':'')+'</div>':'';
  $("res").innerHTML='<div class="vin"></div><h1>'+r.name+'</h1><div class="pt">“'+r.title+'”</div>'+
- '<div class="sec"><h3>What your music says about you</h3><p>'+r.desc+'</p></div>'+
- '<div class="sec"><h3>Your sound profile</h3>'+bars+'</div>'+
- '<div class="sec"><h3>Your listening ritual</h3><p>'+r.ritual+'</p></div>'+
- '<div class="two sec" style="display:grid"><div><h3>🟢 Green flags</h3><ul>'+a.g.map(function(x){return"<li>"+x+"</li>"}).join("")+'</ul></div><div><h3>🟠 Funny red flags</h3><ul>'+a.r.map(function(x){return"<li>"+x+"</li>"}).join("")+'</ul></div></div>'+
- '<div class="sec"><h3>Friend style</h3><p>'+r.friend+'</p></div>'+songs+
- '<div class="sec"><h3>Let’s talk about…</h3><ul>'+a.q.map(function(x){return"<li>"+x+"</li>"}).join("")+'</ul></div>'+
- '<canvas id="cardc" width="600" height="900"></canvas>'+
- '<button class="go" id="shc">Share my Music ID 📤</button><button class="alt" id="sav">Save as image ⬇️</button><button class="alt" id="cpy">Copy text 📋</button><div class="note" id="nt"></div>';
- drawCard($("cardc"),r,s1);wire(s1,s2);
+ '<div class="sec"><h3>What your music says</h3><p>'+r.desc.split('. ')[0]+'.</p></div>'+
+ '<div class="sec"><h3>Your sound profile</h3>'+bars+'</div>'+songs+
+ '<div class="sec" style="text-align:center"><h3>Your shareable card</h3><p>Everything on this card is included when you share 👇</p></div><canvas id="cardc" width="600" height="1100"></canvas>'+
+ '<div class="note" style="margin-bottom:0">Tap below to send your answers and results to the person who shared this link.</div><button class="go" id="snd">Send my results 📨</button><button class="alt" id="shc">Share my Music ID 📤</button><button class="alt" id="sav">Save as image ⬇️</button><button class="alt" id="cpy">Copy text 📋</button><div class="note" id="nt"></div>';
+ drawCard($("cardc"),r,s1,s2);wire(s1,s2);
  $("ld").style.display="none";$("res").style.display="block";burst(180);tone(784,0,.3,"triangle");tone(988,.12,.3,"triangle");tone(1319,.25,.6,"triangle");
  setTimeout(function(){[].forEach.call(document.querySelectorAll(".tr i"),function(i){i.style.width=i.dataset.w+"%"})},150)}
 
@@ -203,22 +200,39 @@ function render(){var r=analyse(),a=A[r.name];S.card=r;
 var TH=[["#2b1566","#6b4bff","#c9b8ff"],["#7a1f10","#ff6a3d","#ffd0b8"],["#07505a","#1fc7b6","#c4fff4"],["#6b3f0c","#e39a2d","#ffe3b0"],["#7a1048","#ff5fa2","#ffd0e6"]];
 function wrap(x,t,cx,y,mw,lh){var w=t.split(" "),l="";w.forEach(function(s){var tt=l?l+" "+s:s;if(x.measureText(tt).width>mw&&l){x.fillText(l,cx,y);l=s;y+=lh}else l=tt});x.fillText(l,cx,y);return y}
 function rr(x,a,b,w,h,r){x.beginPath();if(x.roundRect)x.roundRect(a,b,w,h,r);else x.rect(a,b,w,h)}
-function drawCard(c,r,song){var x=c.getContext("2d"),W=600,H=900,th=TH[r.top],g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,th[0]);g.addColorStop(1,th[1]);x.fillStyle=g;x.fillRect(0,0,W,H);
+function wrapL(x,t,lx,y,mw,lh){var w=t.split(" "),l="";w.forEach(function(s){var tt=l?l+" "+s:s;if(x.measureText(tt).width>mw&&l){x.fillText(l,lx,y);l=s;y+=lh}else l=tt});x.fillText(l,lx,y);return y+lh}
+function drawCard(c,r,s1,s2){var W=600,tmp=document.createElement("canvas");tmp.width=W;tmp.height=5000;var H=paint(tmp.getContext("2d"),W,5000,r,s1,s2);c.width=W;c.height=Math.ceil(H+50);paint(c.getContext("2d"),W,c.height,r,s1,s2)}
+function paint(x,W,H,r,s1,s2){var th=TH[r.top],a=A[r.name],y,g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,th[0]);g.addColorStop(.5,th[1]);g.addColorStop(1,th[0]);x.fillStyle=g;x.fillRect(0,0,W,H);
+ x.textAlign="center";x.fillStyle="#fff";x.font="bold 26px system-ui,sans-serif";x.fillText("♪  MUSIC ID  ♪",W/2,72);
+ var cy=205;x.fillStyle="#0c0c0c";x.beginPath();x.arc(W/2,cy,115,0,7);x.fill();
+ for(var i=44;i<112;i+=9){x.strokeStyle="rgba(255,255,255,.09)";x.lineWidth=2;x.beginPath();x.arc(W/2,cy,i,0,7);x.stroke()}
+ var lg=x.createLinearGradient(W/2-42,cy-42,W/2+42,cy+42);lg.addColorStop(0,th[1]);lg.addColorStop(1,th[2]);x.fillStyle=lg;x.beginPath();x.arc(W/2,cy,42,0,7);x.fill();
+ x.fillStyle="#0c0c0c";x.beginPath();x.arc(W/2,cy,6,0,7);x.fill();
+ x.fillStyle="#fff";x.font="bold 40px system-ui,sans-serif";y=wrap(x,r.name,W/2,385,520,48);
+ x.font="italic 24px system-ui,sans-serif";x.fillStyle="rgba(255,255,255,.9)";x.fillText("“"+r.title+"”",W/2,y+40);y+=84;
+ x.font="22px system-ui,sans-serif";x.fillStyle="#fff";y=wrap(x,S.g.map(function(i){return GEN[i][0]+" "+GEN[i][1]}).join("  ·  "),W/2,y,520,30)+22;
+ x.font="20px system-ui,sans-serif";x.fillStyle="rgba(255,255,255,.82)";y=wrap(x,"Listens most: "+S.m.map(function(i){return MOM[i][0]+" "+MOM[i][1]}).join("  ·  "),W/2,y,520,28)+20;
+ function div(){x.strokeStyle="rgba(255,255,255,.28)";x.lineWidth=2;x.beginPath();x.moveTo(50,y);x.lineTo(550,y);x.stroke();y+=36}
+ function head(t){x.textAlign="left";x.font="bold 17px system-ui,sans-serif";x.fillStyle=th[2];if("letterSpacing" in x)x.letterSpacing="2px";x.fillText(t.toUpperCase(),50,y);if("letterSpacing" in x)x.letterSpacing="0px";y+=32}
+ function para(t,col,it){x.textAlign="left";x.font=(it?"italic ":"")+"22px system-ui,sans-serif";x.fillStyle=col||"#fff";y=wrapL(x,t,50,y,500,31)}
+ function list(arr){arr.forEach(function(t){x.textAlign="left";x.font="22px system-ui,sans-serif";x.fillStyle=th[2];x.fillText("•",50,y);x.fillStyle="#fff";y=wrapL(x,t,74,y,476,31)+3})}
+ div();head("What your music says");para(r.desc);y+=4;
+ div();head("Sound profile");r.t.forEach(function(v,i){x.textAlign="left";x.font="bold 20px system-ui,sans-serif";x.fillStyle="#fff";x.fillText(TN[i],50,y);x.fillStyle="rgba(255,255,255,.2)";rr(x,250,y-16,250,16,8);x.fill();x.fillStyle=th[2];rr(x,250,y-16,250*v/100,16,8);x.fill();x.textAlign="right";x.fillStyle="#fff";x.fillText(v+"%",550,y);y+=40});y-=2;
+ div();head("Your listening ritual");para(r.ritual);y+=4;
+ div();head("Green flags");list(a.g);y+=2;
+ head("Funny red flags");list(a.r);y+=2;
+ div();head("Friend style");para(r.friend);y+=4;
+ if(s1||s2){div();head("Your songs");if(s1)para("On repeat: "+s1);if(s2)para("Song for you: "+s2);y+=4}
+ div();head("Let’s talk about…");list(a.q);
  x.strokeStyle=th[2];x.lineWidth=8;rr(x,16,16,W-32,H-32,34);x.stroke();
- x.textAlign="center";x.fillStyle="#fff";x.font="bold 26px system-ui,sans-serif";x.fillText("♪  MUSIC ID  ♪",W/2,74);
- var cy=265;x.fillStyle="#0c0c0c";x.beginPath();x.arc(W/2,cy,165,0,7);x.fill();
- for(var i=60;i<160;i+=11){x.strokeStyle="rgba(255,255,255,.08)";x.lineWidth=2;x.beginPath();x.arc(W/2,cy,i,0,7);x.stroke()}
- var lg=x.createLinearGradient(W/2-60,cy-60,W/2+60,cy+60);lg.addColorStop(0,th[1]);lg.addColorStop(1,th[2]);x.fillStyle=lg;x.beginPath();x.arc(W/2,cy,58,0,7);x.fill();
- x.fillStyle="#0c0c0c";x.beginPath();x.arc(W/2,cy,8,0,7);x.fill();
- x.strokeStyle="rgba(255,255,255,.3)";x.lineWidth=6;x.beginPath();x.arc(W/2,cy,150,-2.6,-1.9);x.stroke();
- x.fillStyle="#fff";x.font="bold 44px system-ui,sans-serif";var y=wrap(x,r.name,W/2,500,500,52);
- x.font="italic 26px system-ui,sans-serif";x.fillStyle="rgba(255,255,255,.88)";x.fillText("“"+r.title+"”",W/2,y+44);
- var sy=y+100;r.t.forEach(function(v,i){var yy=sy+i*40;x.textAlign="left";x.font="bold 20px system-ui,sans-serif";x.fillStyle="#fff";x.fillText(TN[i],64,yy);x.fillStyle="rgba(255,255,255,.2)";rr(x,260,yy-16,250,16,8);x.fill();x.fillStyle=th[2];rr(x,260,yy-16,250*v/100,16,8);x.fill();x.textAlign="right";x.fillText(v,548,yy)});
- x.textAlign="center";x.font="24px system-ui,sans-serif";x.fillStyle="#fff";x.fillText(S.g.map(function(i){return GEN[i][0]}).join("  ")+"   "+S.g.map(function(i){return GEN[i][1].split(" ")[0]}).join(" · "),W/2,sy+4*40+34);
- if(song){x.font="bold 22px system-ui,sans-serif";x.fillStyle=th[2];x.fillText("On repeat: "+(song.length>34?song.slice(0,33)+"…":song),W/2,H-62)}}
-function txt(s1,s2){var r=S.card;return "Hey! I decoded my music personality 🎧\nI’m "+r.name+" — “"+r.title+"”\nGenres: "+S.g.map(function(i){return GEN[i][0]+" "+GEN[i][1]}).join(", ")+"\n"+r.t.map(function(v,i){return TN[i]+" "+v+"%"}).join(" · ")+(s1?"\nOn repeat: "+s1:"")+(s2?"\nSong I want you to hear: "+s2:"")}
+ return y}
+function txt(s1,s2){var r=S.card,v=r.v;return "Hey! I decoded my music personality 🎧\n\n🎭 Type: "+r.name+" — “"+r.title+"”\n🎶 Genres: "+S.g.map(function(i){return GEN[i][0]+" "+GEN[i][1]}).join(", ")+"\n⏰ Moments: "+S.m.map(function(i){return MOM[i][0]+" "+MOM[i][1]}).join(", ")+"\n🎚️ Mixing board: "+(v[0]<35?"Lyrics":v[0]>65?"Beat":"Lyrics + Beat")+" · "+(v[1]<35?"Old classics":v[1]>65?"New releases":"Old + New")+" · "+(v[2]<35?"Soft":v[2]>65?"Loud":"Soft + Loud")+" · "+(v[3]<35?"Same favorites":v[3]>65?"Always new":"Favorites + New")+"\n📊 Profile: "+r.t.map(function(x,i){return TN[i]+" "+x+"%"}).join(" · ")+"\n🧑‍🤝‍🧑 Friend style: "+r.friend+"\n🌙 Ritual: "+r.ritual+"\n\n❓ The song I’ve had on repeat lately: "+(s1||"(skipped)")+"\n❓ A song I’d want you to listen to: "+(s2||"(skipped)")}
 function wire(s1,s2){
  function dl(b){var a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="my-music-id.png";document.body.appendChild(a);a.click();a.remove();$("nt").textContent="Saved! Now send the image on Snapchat 👻"}
+$("snd").onclick=function(){var m=txt(s1,s2),n=$("nt");n.textContent="Sending…";
+ if(ENDPOINT){fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify({subject:"Music Mirror results",message:m})}).then(function(r){n.textContent=r.ok?"Sent! 💌 Thank you":"Couldn’t send. Please use Share or Copy below."}).catch(function(){n.textContent="Couldn’t send. Please use Share or Copy below."})}
+ else if(navigator.share){navigator.share({text:m}).catch(function(){})}
+ else{try{navigator.clipboard.writeText(m);n.textContent="Copied! Paste it in your chat 💬"}catch(e){n.textContent="Please use Copy text below."}}};
  $("shc").onclick=function(){$("cardc").toBlob(function(b){var f;try{f=new File([b],"my-music-id.png",{type:"image/png"})}catch(e){dl(b);return}if(navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f],text:txt(s1,s2)}).catch(function(){})}else dl(b)},"image/png")};
  $("sav").onclick=function(){$("cardc").toBlob(dl,"image/png")};
  $("cpy").onclick=function(){var m=txt(s1,s2),ok=function(){$("nt").textContent="Copied! Paste it in your chat 💬"},fb=function(){var t=document.createElement("textarea");t.value=m;document.body.appendChild(t);t.select();try{document.execCommand("copy");ok()}catch(e){$("nt").textContent="Couldn’t copy. Please use the image."}t.remove()};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(m).then(ok,fb)}else fb()}}
