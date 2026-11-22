@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Music Mirror 🎧</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--ac:#ff4fa3;--ac2:#27d3ff;--tx:#f3efff;--mu:#b7aedd;--chip:rgba(255,255,255,.09)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+body{background:radial-gradient(circle at 20% 0,#2b1055,#0d0820 65%);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;display:flex;justify-content:center;padding:16px;overflow-x:hidden}
+#fx{position:fixed;inset:0;z-index:20;pointer-events:none}
+.card{background:rgba(24,14,52,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.13);border-radius:28px;padding:24px 18px;max-width:440px;width:100%;align-self:flex-start;margin-top:10px;box-shadow:0 14px 40px rgba(0,0,0,.45)}
+.dots{display:flex;gap:5px;justify-content:center;margin-bottom:14px}
+.dots i{width:24px;height:5px;border-radius:9px;background:rgba(255,255,255,.15)}.dots i.on{background:linear-gradient(90deg,var(--ac),var(--ac2))}
+.eq{display:flex;gap:5px;justify-content:center;align-items:flex-end;height:46px;margin:4px 0 10px}
+.eq i{width:8px;border-radius:4px;background:linear-gradient(var(--ac2),var(--ac));animation:eq 1s ease-in-out infinite alternate}
+.eq i:nth-child(1){animation-duration:.7s}.eq i:nth-child(2){animation-duration:1.1s}.eq i:nth-child(3){animation-duration:.8s}.eq i:nth-child(4){animation-duration:1.3s}.eq i:nth-child(5){animation-duration:.9s}.eq i:nth-child(6){animation-duration:1.2s}.eq i:nth-child(7){animation-duration:.75s}
+@keyframes eq{from{height:8px}to{height:46px}}
+.vin{width:120px;height:120px;border-radius:50%;margin:6px auto;background:radial-gradient(circle,var(--ac) 0 17%,#111 18% 20%,#1b1b1b 21%,#0c0c0c 60%,#1c1c1c 61%,#0c0c0c 100%);box-shadow:0 0 30px rgba(255,79,163,.5);animation:sp 3s linear infinite;position:relative}
+.vin:after{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 20deg,transparent 0 20%,rgba(255,255,255,.18) 25%,transparent 30% 70%,rgba(255,255,255,.14) 75%,transparent 80%)}
+@keyframes sp{to{transform:rotate(360deg)}}
+h1{text-align:center;font-size:23px;margin:8px 0;line-height:1.25}
+p.s{text-align:center;color:var(--mu);margin:0 0 14px;line-height:1.5}
+.view{display:none;animation:in .5s ease}
+@keyframes in{from{opacity:0;transform:translateY(14px)}}
+button{font-family:inherit}
+.go{background:linear-gradient(90deg,var(--ac),#9b5cff);color:#fff;border:0;padding:14px 24px;border-radius:15px;font-size:17px;font-weight:800;cursor:pointer;width:100%;margin-top:10px}
+.go:disabled{opacity:.35}
+.alt{background:var(--chip);color:var(--tx);border:0;padding:13px 20px;border-radius:15px;font-size:15px;cursor:pointer;width:100%;margin-top:10px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.g{background:var(--chip);border:2px solid transparent;border-radius:16px;padding:12px 8px;color:var(--tx);cursor:pointer;font-size:14px;text-align:center}
+.g b{display:block;font-size:26px;margin-bottom:2px}
+.g.on{border-color:var(--ac);box-shadow:0 0 18px rgba(255,79,163,.5);transform:scale(1.04)}
+.cnt{text-align:center;color:var(--mu);font-size:14px;margin-top:8px}
+.sl{margin:16px 0}
+.sl .lb{display:flex;justify-content:space-between;font-size:14px;font-weight:700;margin-bottom:4px}
+input[type=range]{width:100%;accent-color:var(--ac);height:28px}
+input[type=text]{width:100%;padding:13px;border-radius:13px;border:0;font-size:16px;background:rgba(255,255,255,.94);color:#1d1138;user-select:text;-webkit-user-select:text}
+label{display:block;font-weight:700;margin:14px 0 7px;font-size:14px}
+.ld{text-align:center;padding:26px 0}
+.sec{background:var(--chip);border-radius:18px;padding:14px 15px;margin:12px 0;line-height:1.55;font-size:15px}
+.sec h3{margin:0 0 7px;font-size:12px;text-transform:uppercase;letter-spacing:1.4px;color:var(--ac2)}
+.sec p{margin:0;color:var(--tx)}
+.sec ul{margin:0;padding-left:18px}.sec li{margin:3px 0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.two h3{color:#fff}
+.pt{text-align:center;color:var(--mu);font-style:italic;margin-bottom:6px}
+.bar{margin:9px 0}.bar .t{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
+.bar .tr{height:9px;background:rgba(255,255,255,.14);border-radius:9px;overflow:hidden}
+.bar .tr i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ac),var(--ac2));border-radius:9px;transition:width 1.3s cubic-bezier(.2,.9,.3,1)}
+#cardc{width:100%;max-width:310px;display:block;margin:14px auto;border-radius:18px;box-shadow:0 12px 36px rgba(0,0,0,.5)}
+.note{text-align:center;color:var(--mu);font-size:14px;margin-top:10px;min-height:20px}
+.mute{position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);right:10px;z-index:30;background:rgba(255,255,255,.14);border:0;color:#fff;border-radius:50%;width:40px;height:40px;font-size:19px;cursor:pointer}
+</style></head><body>
+<canvas id="fx"></canvas>
+<button class="mute" id="mute" aria-label="Sound">🔊</button>
+<div class="card">
+ <div class="dots" id="dots"></div>
+
+ <div class="view" id="v0">
+  <div class="vin"></div>
+  <h1>Your music says more about you than you think 🎧</h1>
+  <p class="s">Answer a few questions about how you listen and I’ll decode your music personality. About 2 minutes, no right or wrong answers.</p>
+  <button class="go" id="start">Decode me 🎶</button>
+  <button class="alt" id="later">Maybe later</button>
+ </div>
+
+ <div class="view" id="v1">
+  <h1>Step 1 · Your sound</h1>
+  <p class="s">Pick 1 to 4 genres you actually listen to</p>
+  <div class="grid" id="gen"></div>
+  <div class="cnt" id="cnt">0 / 4</div>
+  <button class="go" id="n1" disabled>Next →</button>
+  <button class="alt back" data-b="0">← Previous</button>
+ </div>
+
+ <div class="view" id="v2">
+  <h1>Step 2 · Your moments</h1>
+  <p class="s">When does music hit you the most? Pick up to 2</p>
+  <div class="grid" id="mom"></div>
+  <button class="go" id="n2" disabled>Next →</button>
+  <button class="alt back" data-b="1">← Previous</button>
+ </div>
+
+ <div class="view" id="v3">
+  <h1>Step 3 · Your mixing board</h1>
+  <p class="s">Slide each one to where you naturally sit</p>
+  <div class="sl"><div class="lb"><span>📝 Lyrics</span><span>Beat 🥁</span></div><input type="range" min="0" max="100" value="50" class="rg"></div>
+  <div class="sl"><div class="lb"><span>📻 Old classics</span><span>New releases 🆕</span></div><input type="range" min="0" max="100" value="50" class="rg"></div>
+  <div class="sl"><div class="lb"><span>🌙 Soft</span><span>Loud 🔊</span></div><input type="range" min="0" max="100" value="50" class="rg"></div>
+  <div class="sl"><div class="lb"><span>🔁 Same favorites</span><span>Always new 🔍</span></div><input type="range" min="0" max="100" value="50" class="rg"></div>
+  <button class="go" id="n3">Next →</button>
+  <button class="alt back" data-b="2">← Previous</button>
+ </div>
+
+ <div class="view" id="v4">
+  <h1>Step 4 · Your songs</h1>
+  <p class="s">Optional, but this is the best part</p>
+  <label>The song you’ve had on repeat lately</label>
+  <input type="text" id="s1" maxlength="60" placeholder="Song name, artist">
+  <label>A song you’d want me to listen to</label>
+  <input type="text" id="s2" maxlength="60" placeholder="Song name, artist">
+  <button class="go" id="n4">Decode my music personality ✨</button>
+  <button class="alt back" data-b="3">← Previous</button>
+ </div>
+
+ <div class="view" id="v5">
+  <div class="ld" id="ld"><div class="vin"></div><h1 id="lt">Analyzing your playlist…</h1><div class="eq"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+  <div id="res" style="display:none"></div>
+ </div>
+
+ <div class="view" id="vl">
+  <div class="eq"><i></i><i></i><i></i><i></i><i></i></div>
+  <h1>No worries!</h1>
+  <p class="s">Thanks for stopping by. Take care!</p>
+ </div>
+</div>
+
+<script>
+var $=function(i){return document.getElementById(i)};
+/* traits: [Emotional depth, Energy, Discovery, Nostalgia, Social vibe] */
+var GEN=[["🎤","Pop",[50,70,40,50,80]],["🔥","Hip-hop / Rap",[55,80,55,35,70]],["🎸","Rock",[65,75,50,70,60]],["🌿","Indie / Alt",[80,45,85,45,35]],["☕","Lo-fi / Chill",[70,20,60,40,25]],["🎧","EDM / Dance",[30,95,60,25,90]],["🎻","Classical / Instrumental",[75,25,70,75,20]],["🎬","Bollywood",[80,60,35,70,75]],["🥁","Punjabi",[40,90,35,45,90]],["💜","R&B / Soul",[85,40,55,50,50]],["🪕","Folk / Acoustic",[80,30,60,80,45]],["🌸","K-pop",[55,85,70,25,80]],["🤘","Metal",[60,95,65,55,40]],["🎷","Jazz / Blues",[75,30,85,70,30]],["🕌","Sufi / Ghazal",[95,15,60,85,25]],["🏔️","Assamese / Regional",[75,40,50,90,60]]];
+var MOM=[["🌙","Late at night",[8,0,4,0,0],"Your most honest listening happens after dark.","Headphones in, lights low, world off. Late-night songs are your private conversations."],["🚌","On the move",[0,2,3,0,2],"You soundtrack your journeys like a movie scene.","Every commute is a mini-film and you’re the director picking the score."],["🏋️","Workout / pumped",[0,10,0,0,2],"Music is your fuel when you need energy.","You build a playlist, press play and suddenly everything feels doable."],["📚","Studying / working",[3,-8,0,0,-3],"You use music to focus and stay in your zone.","A steady playlist makes a wall around you so you can get things done."],["🌧️","When I feel low",[10,-3,0,3,-4],"You turn to songs when words are hard to find.","When you’re low, a song says what you can’t. It’s how you heal."],["😄","When I’m happy",[0,4,0,0,8],"Good mood means turning the volume up and sharing it.","When you’re happy the music goes up, and so does everyone’s mood around you."]];
+var TN=["Emotional depth","Energy","Discovery","Nostalgia","Social vibe"],TK=["E","N","O","L","S"];
+var A={
+"The Midnight Feeler":{d:"You use music as a mirror. Songs aren’t background noise for you; they’re where you process your day, your people and the things you don’t say out loud.",g:["Remembers how you felt, not just what you said","A real listener who notices small things"],r:["Says “I’m fine” while the playlist says otherwise","Cries at a song and calls it allergies"],q:["What’s a song that hit you harder than you expected?","Which song do you play when you need to feel something?","Is there a song you secretly connect with one person?"]},
+"The Heartbeat Rebel":{d:"Big feelings, big sound. You like music with something to say, and you like it loud. You probably have strong opinions about what counts as a real song.",g:["Passionate and loyal to what they love","Brings real intensity and honesty"],r:["Will defend a favorite artist in any debate","The volume knob only has one setting"],q:["Which lyric feels like it was written about you?","What’s the first concert you’d go to with no budget?","Which artist do you defend every single time?"]},
+"The Party Starter":{d:"You are the energy in the room. Your music is made for moving, sharing and singing badly with friends, and a quiet room feels like a missed opportunity.",g:["Makes any plan more fun","Gets everyone involved, nobody gets left out"],r:["Takes over the aux cord, lovingly","Cannot hear a good beat and sit still"],q:["What’s the song that gets you on your feet instantly?","What’s your best memory of dancing with friends?","If you were DJ for a night, what’s the first track?"]},
+"The Hype Engine":{d:"Music is your power-up. You pick songs that make you stronger, faster and more focused, and you move through life like it has a boss-fight soundtrack.",g:["Driven and motivated","Brings energy to your own goals"],r:["Treats every walk like a training montage","Skips any song that starts slowly"],q:["What’s the song that makes you feel unstoppable?","What’s on your 'get things done' playlist?","What’s the most hyped you’ve ever been at a live event?"]},
+"The Deep-Diver":{d:"You don’t just listen, you explore. You follow an artist down the rabbit hole, read the lyrics, and feel every layer. Your taste has depth and range.",g:["Curious and thoughtful","Finds meaning in small details"],r:["Says “you wouldn’t know them” about half your playlist","Will analyze a lyric for twenty minutes"],q:["What’s the last artist you went down a rabbit hole for?","Which album do you think everyone should hear start to finish?","What’s a lyric that changed how you see something?"]},
+"The Genre Explorer":{d:"Your playlists are a world tour. You jump between styles, languages and eras without caring about labels, and you love finding something before everyone else does.",g:["Open-minded and adventurous","Always has a fresh recommendation"],r:["Playlist makes no sense to anyone else","Gets bored of a song after twenty plays"],q:["What’s the most unexpected genre you love?","What’s the best song you found by accident?","Which language do you love listening to even if you can’t speak it?"]},
+"The Old-Soul Narrator":{d:"You love songs that tell stories. Your taste has roots, with timeless melodies and lyrics that feel like conversations with someone wise, and music is your way of staying close to memories.",g:["Warm, grounded and sentimental","Remembers and values what matters"],r:["Believes old songs were just better","Gets nostalgic at the first note"],q:["Which old song brings back a memory instantly?","What did your family listen to when you were small?","Which singer’s voice feels like home to you?"]},
+"The Time Traveler":{d:"Your heart lives in another decade. You return to the classics again and again, because for you a great song never ages, it just gets better with time.",g:["Loyal, consistent and sincere","Knows what real quality sounds like"],r:["Calls new songs 'all the same'","Has one playlist from 2015 they will never delete"],q:["Which decade had your favorite music?","What’s a classic you’ll never get tired of?","Which song takes you back to a specific place or time?"]},
+"The Crowd Favorite":{d:"You’re the person everyone wants to share music with. You know what’s trending, what’s fun and what works for the room, and your playlists bring people together.",g:["Warm, social and easy to be around","Knows how to read a mood"],r:["Has fifty group playlists at once","Gets visibly sad when nobody sings along"],q:["What’s the song you and your friends always sing together?","What was the last song that spread through your whole friend group?","What’s your favorite car-ride song with people?"]},
+"The Playlist Sharer":{d:"You use music to connect. Sending someone a song is how you say 'I thought of you', and the right track at the right time is your love language.",g:["Thoughtful and caring in small ways","Remembers what songs matter to which person"],r:["Sends a song instead of explaining feelings","Gets a bit hurt if you don’t listen right away"],q:["What’s the last song you sent to someone and why?","Which song reminds you of a good friend?","What song would you put on a playlist for a long trip?"]}};
+var TITLES={0:["3AM Thoughts & Slow Skies","Headphones On, World Off"],1:["Windows Down, Volume Up","Main Character Commute"],2:["No Skips, Only Gains","Louder Than My Excuses"],3:["Focus Mode: On","Quiet Brain, Loud Playlist"],4:["Songs For Rainy Brains","Heart On Shuffle"],5:["Good Mood Only","Sunshine On Repeat"]};
+var S={g:[],m:[],card:null};
+
+/* nav */
+var dots=$("dots");for(var i=0;i<6;i++)dots.appendChild(document.createElement("i"));
+function show(n){["v0","v1","v2","v3","v4","v5","vl"].forEach(function(x,i){$(x).style.display=(n===i||(n==="l"&&x==="vl"))?"block":"none"});[].forEach.call(dots.children,function(d,i){d.className=(n!=="l"&&i<=n)?"on":""});dots.style.display=n==="l"?"none":"flex";scrollTo(0,0)}
+[].forEach.call(document.querySelectorAll(".back"),function(b){b.onclick=function(){show(+b.dataset.b)}});
+
+/* sound + confetti */
+var AC=null,muted=false;
+function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==="suspended")AC.resume();return AC}
+function tone(f,t,d,type,v){var a=ac();if(!a||muted)return;var o=a.createOscillator(),g=a.createGain();o.type=type||"sine";o.frequency.value=f;g.gain.setValueAtTime(v||.12,a.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+t+d);o.connect(g);g.connect(a.destination);o.start(a.currentTime+t);o.stop(a.currentTime+t+d+.05)}
+$("mute").onclick=function(){muted=!muted;this.textContent=muted?"🔇":"🔊"};
+var fx=$("fx"),fc=fx.getContext("2d"),P=[];
+function fit(){fx.width=innerWidth;fx.height=innerHeight}fit();addEventListener("resize",fit);
+var cols=["#ff4fa3","#27d3ff","#ffd36e","#9b5cff","#7dffb0","#ffffff"];
+function burst(n){for(var i=0;i<n;i++)P.push({x:innerWidth/2,y:innerHeight*.4,vx:(Math.random()-.5)*14,vy:-Math.random()*12-3,s:5+Math.random()*7,c:cols[i%6],r:Math.random()*6,vr:(Math.random()-.5)*.4,l:130+Math.random()*60})}
+(function lp(){fc.clearRect(0,0,fx.width,fx.height);P=P.filter(function(p){return p.l>0&&p.y<fx.height+20});P.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=.3;p.vx*=.99;p.r+=p.vr;p.l--;fc.save();fc.translate(p.x,p.y);fc.rotate(p.r);fc.fillStyle=p.c;fc.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);fc.restore()});requestAnimationFrame(lp)})();
+
+/* steps */
+$("start").onclick=function(){ac();tone(523,0,.2);tone(784,.12,.3);show(1)};
+$("later").onclick=function(){show("l")};
+GEN.forEach(function(v,i){var b=document.createElement("button");b.className="g";b.innerHTML="<b>"+v[0]+"</b>"+v[1];b.onclick=function(){var k=S.g.indexOf(i);if(k>-1){S.g.splice(k,1);b.classList.remove("on")}else if(S.g.length<4){S.g.push(i);b.classList.add("on");tone(400+S.g.length*130,0,.18)}$("cnt").textContent=S.g.length+" / 4";$("n1").disabled=!S.g.length};$("gen").appendChild(b)});
+$("n1").onclick=function(){show(2)};
+MOM.forEach(function(v,i){var b=document.createElement("button");b.className="g";b.innerHTML="<b>"+v[0]+"</b>"+v[1];b.onclick=function(){var k=S.m.indexOf(i);if(k>-1){S.m.splice(k,1);b.classList.remove("on")}else if(S.m.length<2){S.m.push(i);b.classList.add("on");tone(500+S.m.length*100,0,.18)}$("n2").disabled=!S.m.length};$("mom").appendChild(b)});
+$("n2").onclick=function(){show(3)};
+$("n3").onclick=function(){show(4)};
+
+/* analysis */
+function esc(s){return s.replace(/[&<>]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c]})}
+function rnd(n){return Math.floor(Math.random()*n)}
+function analyse(){var t=[0,0,0,0,0];S.g.forEach(function(i){for(var k=0;k<5;k++)t[k]+=GEN[i][2][k]/S.g.length});
+ var v=[].map.call(document.querySelectorAll(".rg"),function(r){return +r.value});
+ t[0]+=(50-v[0])*.3;t[1]+=(v[0]-50)*.3;t[3]+=(50-v[1])*.4;t[2]+=(v[1]-50)*.2;t[1]+=(v[2]-50)*.3;t[2]+=(v[3]-50)*.4;
+ S.m.forEach(function(i){for(var k=0;k<5;k++)t[k]+=MOM[i][2][k]});
+ t=t.map(function(x){return Math.round(Math.max(8,Math.min(98,x)))});
+ var top=0;for(var k=1;k<5;k++)if(t[k]>t[top])top=k;
+ var name=[t[1]>=60?"The Heartbeat Rebel":"The Midnight Feeler",t[4]>=60?"The Party Starter":"The Hype Engine",t[0]>=60?"The Deep-Diver":"The Genre Explorer",t[0]>=60?"The Old-Soul Narrator":"The Time Traveler",t[1]>=60?"The Crowd Favorite":"The Playlist Sharer"][top];
+ var d=A[name].d,m0=MOM[S.m[0]];
+ var l1=v[0]<35?"The words reach you first.":v[0]>65?"The beat gets to you before the lyrics do.":"You enjoy both the words and the beat.";
+ var l2=v[1]<35?"Your taste leans classic and you trust songs that have stood the test of time.":v[1]>65?"You live on new releases and love being early to a song.":"You mix old favorites with new finds.";
+ var l3=v[2]<35?"You like it soft and gentle.":v[2]>65?"You like it loud and full of energy.":"You go from calm to loud depending on the day.";
+ var l4=v[3]<35?"You replay the songs you love.":v[3]>65?"You’re always hunting for something new.":"Half comfort songs, half new discoveries.";
+ var fr=t[4]>=70?"The one who makes the group playlist and knows what the room needs.":t[4]>=40?"Easy to talk to, and you pick the right song at the right time.":"A few close people, deep talks and shared headphones.";
+ return {t:t,name:name,top:top,desc:d+" "+m0[3]+" "+l1+" "+l2+" "+l3+" "+l4,ritual:m0[4],title:TITLES[S.m[0]][rnd(2)],friend:fr,v:v}}
+
+/* result */
+var lines=["Analyzing your playlist…","Tuning the frequencies…","Reading between the lyrics…","Pressing your record…"];
+$("n4").onclick=function(){show(5);$("ld").style.display="block";$("res").style.display="none";var k=0;$("lt").textContent=lines[0];tone(300,0,.4,"sawtooth",.05);
+ var iv=setInterval(function(){k++;if(k<lines.length){$("lt").textContent=lines[k];tone(400+k*120,0,.2,"triangle",.07)}else{clearInterval(iv);render()}},700)};
+function render(){var r=analyse(),a=A[r.name];S.card=r;
+ var s1=$("s1").value.trim(),s2=$("s2").value.trim();
+ var bars=r.t.map(function(x,i){return '<div class="bar"><div class="t"><span>'+TN[i]+'</span><span>'+x+'%</span></div><div class="tr"><i data-w="'+x+'"></i></div></div>'}).join("");
+ var songs=(s1||s2)?'<div class="sec"><h3>🎵 Your songs</h3>'+(s1?'<p><b>On repeat:</b> '+esc(s1)+'</p>':'')+(s2?'<p style="margin-top:6px"><b>Song for me:</b> '+esc(s2)+'</p>':'')+'</div>':'';
+ $("res").innerHTML='<div class="vin"></div><h1>'+r.name+'</h1><div class="pt">“'+r.title+'”</div>'+
+ '<div class="sec"><h3>What your music says about you</h3><p>'+r.desc+'</p></div>'+
+ '<div class="sec"><h3>Your sound profile</h3>'+bars+'</div>'+
+ '<div class="sec"><h3>Your listening ritual</h3><p>'+r.ritual+'</p></div>'+
+ '<div class="two sec" style="display:grid"><div><h3>🟢 Green flags</h3><ul>'+a.g.map(function(x){return"<li>"+x+"</li>"}).join("")+'</ul></div><div><h3>🟠 Funny red flags</h3><ul>'+a.r.map(function(x){return"<li>"+x+"</li>"}).join("")+'</ul></div></div>'+
+ '<div class="sec"><h3>Friend style</h3><p>'+r.friend+'</p></div>'+songs+
+ '<div class="sec"><h3>Let’s talk about…</h3><ul>'+a.q.map(function(x){return"<li>"+x+"</li>"}).join("")+'</ul></div>'+
+ '<canvas id="cardc" width="600" height="900"></canvas>'+
+ '<button class="go" id="shc">Share my Music ID 📤</button><button class="alt" id="sav">Save as image ⬇️</button><button class="alt" id="cpy">Copy text 📋</button><div class="note" id="nt"></div>';
+ drawCard($("cardc"),r,s1);wire(s1,s2);
+ $("ld").style.display="none";$("res").style.display="block";burst(180);tone(784,0,.3,"triangle");tone(988,.12,.3,"triangle");tone(1319,.25,.6,"triangle");
+ setTimeout(function(){[].forEach.call(document.querySelectorAll(".tr i"),function(i){i.style.width=i.dataset.w+"%"})},150)}
+
+/* card image */
+var TH=[["#2b1566","#6b4bff","#c9b8ff"],["#7a1f10","#ff6a3d","#ffd0b8"],["#07505a","#1fc7b6","#c4fff4"],["#6b3f0c","#e39a2d","#ffe3b0"],["#7a1048","#ff5fa2","#ffd0e6"]];
+function wrap(x,t,cx,y,mw,lh){var w=t.split(" "),l="";w.forEach(function(s){var tt=l?l+" "+s:s;if(x.measureText(tt).width>mw&&l){x.fillText(l,cx,y);l=s;y+=lh}else l=tt});x.fillText(l,cx,y);return y}
+function rr(x,a,b,w,h,r){x.beginPath();if(x.roundRect)x.roundRect(a,b,w,h,r);else x.rect(a,b,w,h)}
+function drawCard(c,r,song){var x=c.getContext("2d"),W=600,H=900,th=TH[r.top],g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,th[0]);g.addColorStop(1,th[1]);x.fillStyle=g;x.fillRect(0,0,W,H);
+ x.strokeStyle=th[2];x.lineWidth=8;rr(x,16,16,W-32,H-32,34);x.stroke();
+ x.textAlign="center";x.fillStyle="#fff";x.font="bold 26px system-ui,sans-serif";x.fillText("♪  MUSIC ID  ♪",W/2,74);
+ var cy=265;x.fillStyle="#0c0c0c";x.beginPath();x.arc(W/2,cy,165,0,7);x.fill();
+ for(var i=60;i<160;i+=11){x.strokeStyle="rgba(255,255,255,.08)";x.lineWidth=2;x.beginPath();x.arc(W/2,cy,i,0,7);x.stroke()}
+ var lg=x.createLinearGradient(W/2-60,cy-60,W/2+60,cy+60);lg.addColorStop(0,th[1]);lg.addColorStop(1,th[2]);x.fillStyle=lg;x.beginPath();x.arc(W/2,cy,58,0,7);x.fill();
+ x.fillStyle="#0c0c0c";x.beginPath();x.arc(W/2,cy,8,0,7);x.fill();
+ x.strokeStyle="rgba(255,255,255,.3)";x.lineWidth=6;x.beginPath();x.arc(W/2,cy,150,-2.6,-1.9);x.stroke();
+ x.fillStyle="#fff";x.font="bold 44px system-ui,sans-serif";var y=wrap(x,r.name,W/2,500,500,52);
+ x.font="italic 26px system-ui,sans-serif";x.fillStyle="rgba(255,255,255,.88)";x.fillText("“"+r.title+"”",W/2,y+44);
+ var sy=y+100;r.t.forEach(function(v,i){var yy=sy+i*40;x.textAlign="left";x.font="bold 20px system-ui,sans-serif";x.fillStyle="#fff";x.fillText(TN[i],64,yy);x.fillStyle="rgba(255,255,255,.2)";rr(x,260,yy-16,250,16,8);x.fill();x.fillStyle=th[2];rr(x,260,yy-16,250*v/100,16,8);x.fill();x.textAlign="right";x.fillText(v,548,yy)});
+ x.textAlign="center";x.font="24px system-ui,sans-serif";x.fillStyle="#fff";x.fillText(S.g.map(function(i){return GEN[i][0]}).join("  ")+"   "+S.g.map(function(i){return GEN[i][1].split(" ")[0]}).join(" · "),W/2,sy+4*40+34);
+ if(song){x.font="bold 22px system-ui,sans-serif";x.fillStyle=th[2];x.fillText("On repeat: "+(song.length>34?song.slice(0,33)+"…":song),W/2,H-62)}}
+function txt(s1,s2){var r=S.card;return "Hey! I decoded my music personality 🎧\nI’m "+r.name+" — “"+r.title+"”\nGenres: "+S.g.map(function(i){return GEN[i][0]+" "+GEN[i][1]}).join(", ")+"\n"+r.t.map(function(v,i){return TN[i]+" "+v+"%"}).join(" · ")+(s1?"\nOn repeat: "+s1:"")+(s2?"\nSong I want you to hear: "+s2:"")}
+function wire(s1,s2){
+ function dl(b){var a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="my-music-id.png";document.body.appendChild(a);a.click();a.remove();$("nt").textContent="Saved! Now send the image on Snapchat 👻"}
+ $("shc").onclick=function(){$("cardc").toBlob(function(b){var f;try{f=new File([b],"my-music-id.png",{type:"image/png"})}catch(e){dl(b);return}if(navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f],text:txt(s1,s2)}).catch(function(){})}else dl(b)},"image/png")};
+ $("sav").onclick=function(){$("cardc").toBlob(dl,"image/png")};
+ $("cpy").onclick=function(){var m=txt(s1,s2),ok=function(){$("nt").textContent="Copied! Paste it in your chat 💬"},fb=function(){var t=document.createElement("textarea");t.value=m;document.body.appendChild(t);t.select();try{document.execCommand("copy");ok()}catch(e){$("nt").textContent="Couldn’t copy. Please use the image."}t.remove()};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(m).then(ok,fb)}else fb()}}
+show(0);
+</script></body></html>
