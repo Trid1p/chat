@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A surprise for you 🎁</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:radial-gradient(circle at 50% 0,#4a2a7a,#1a1033 70%);color:#fff;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;text-align:center;min-height:100vh;overflow-x:hidden}
+canvas{position:fixed;inset:0;pointer-events:none;z-index:5}
+.st{display:none;padding:40px 20px;max-width:440px;margin:0 auto;animation:in .6s ease}
+@keyframes in{from{opacity:0;transform:translateY(16px)}}
+h1{font-size:28px;margin:10px 0}
+p{color:#d9cdf5;line-height:1.5}
+.gift{font-size:130px;background:none;border:0;cursor:pointer;animation:sh 1.2s infinite;display:block;margin:30px auto 10px}
+@keyframes sh{0%,100%{transform:rotate(0)}20%{transform:rotate(-8deg)}40%{transform:rotate(8deg)}60%{transform:rotate(-5deg)}80%{transform:rotate(5deg)}}
+.cake{font-size:90px;line-height:1;margin-top:30px}
+.candles{display:flex;justify-content:center;gap:14px;margin-bottom:-8px;min-height:70px}
+.fl{font-size:44px;background:none;border:0;cursor:pointer;animation:fl .5s infinite alternate;padding:0}
+@keyframes fl{to{transform:scale(1.15) translateY(-3px)}}
+.fl.off{animation:none;opacity:.5;filter:grayscale(1);transform:none}
+.big{font-size:34px;font-weight:800;background:linear-gradient(90deg,#ff8ab3,#ffd36e,#9be7ff);-webkit-background-clip:text;background-clip:text;color:transparent;margin:8px 0}
+.wishes{display:grid;gap:12px;margin:22px 0}
+.w{background:rgba(255,255,255,.12);border:2px dashed rgba(255,255,255,.4);border-radius:18px;padding:18px;font-size:16px;color:#fff;cursor:pointer;min-height:64px}
+.w.o{border-style:solid;background:rgba(255,255,255,.2);animation:in .4s ease;line-height:1.5}
+button.go{background:linear-gradient(90deg,#ff6fa5,#ffb36b);color:#2a1240;border:0;padding:15px 28px;border-radius:16px;font-size:18px;font-weight:800;cursor:pointer;width:100%;margin-top:10px}
+button.go:disabled{opacity:.4}
+.note{font-size:14px;margin-top:10px}
+.stars{position:fixed;inset:0;pointer-events:none;opacity:.5;background-image:radial-gradient(2px 2px at 20% 30%,#fff,transparent),radial-gradient(2px 2px at 70% 20%,#fff,transparent),radial-gradient(1.5px 1.5px at 40% 70%,#fff,transparent),radial-gradient(2px 2px at 85% 60%,#fff,transparent),radial-gradient(1.5px 1.5px at 10% 85%,#fff,transparent)}
+</style></head><body>
+<div class="stars"></div><canvas id="cv"></canvas>
+
+<div class="st" id="s0">
+ <p>I made something for you… 🤫</p>
+ <button class="gift" id="gift" aria-label="Open the gift">🎁</button>
+ <p><b>Tap the gift</b></p>
+</div>
+
+<div class="st" id="s1">
+ <h1>Make a wish ✨</h1>
+ <p>Close your eyes, wish for something big, then tap each flame to blow it out.</p>
+ <div class="candles" id="cd"></div>
+ <div class="cake">🎂</div>
+</div>
+
+<div class="st" id="s2">
+ <div style="font-size:60px">🎉</div>
+ <div class="big" id="hb">Happy Birthday!</div>
+ <p>Your wish is on its way. Open your 3 little surprises:</p>
+ <div class="wishes" id="ws"></div>
+ <button class="go" id="thx" disabled>Say thanks 💌</button>
+ <button class="go" id="again" style="background:rgba(255,255,255,.15);color:#fff">Celebrate again 🎊</button>
+ <div class="note" id="nt"></div>
+</div>
+
+<script>
+var $=function(i){return document.getElementById(i)};
+var name=(new URLSearchParams(location.search).get("name")||"").trim().slice(0,24);
+if(name)$("hb").textContent="Happy Birthday, "+name+"!";
+var msgs=["🌟 You make ordinary days feel special. Never lose that smile.","🎈 May this year bring you more laughter, better luck and all the things you quietly hope for.","💖 Today is all about you. You deserve the best cake, the best wishes and the best year yet."];
+function show(n){["s0","s1","s2"].forEach(function(x,i){$(x).style.display=i===n?"block":"none"})}
+var cv=$("cv"),cx=cv.getContext("2d"),P=[];
+function fit(){cv.width=innerWidth;cv.height=innerHeight}fit();addEventListener("resize",fit);
+var cols=["#ff6fa5","#ffd36e","#9be7ff","#b69bff","#7dffb0","#fff"];
+function burst(n){for(var i=0;i<n;i++)P.push({x:innerWidth/2,y:innerHeight*.45,vx:(Math.random()-.5)*14,vy:-Math.random()*13-3,s:5+Math.random()*7,c:cols[i%cols.length],r:Math.random()*6,vr:(Math.random()-.5)*.4,l:140+Math.random()*60})}
+(function loop(){cx.clearRect(0,0,cv.width,cv.height);P=P.filter(function(p){return p.l>0&&p.y<cv.height+20});P.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=.3;p.vx*=.99;p.r+=p.vr;p.l--;cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);cx.restore()});requestAnimationFrame(loop)})();
+$("gift").onclick=function(){burst(120);setTimeout(function(){show(1)},700)};
+var left=5;
+for(var i=0;i<5;i++){(function(){var b=document.createElement("button");b.className="fl";b.textContent="🔥";b.onclick=function(){if(b.classList.contains("off"))return;b.classList.add("off");b.textContent="💨";left--;if(!left){burst(180);setTimeout(function(){show(2);burst(120)},900)}};$("cd").appendChild(b)})()}
+var opened=0;
+msgs.forEach(function(m,i){var b=document.createElement("button");b.className="w";b.textContent="🎁 Open surprise "+(i+1);b.onclick=function(){if(b.classList.contains("o"))return;b.classList.add("o");b.textContent=m;burst(50);opened++;if(opened===3)$("thx").disabled=false};$("ws").appendChild(b)});
+$("again").onclick=function(){burst(200)};
+$("thx").onclick=function(){var t="Thank you for the birthday surprise! 🎂💖",nt=$("nt");
+ if(navigator.share){navigator.share({text:t}).catch(function(){})}
+ else{try{navigator.clipboard.writeText(t);nt.textContent="Copied! Paste it in your chat 💬"}catch(e){nt.textContent="Please send a thank-you message 💬"}}};
+show(0);
+</script></body></html>
